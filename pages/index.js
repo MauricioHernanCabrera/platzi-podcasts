@@ -1,57 +1,70 @@
-export default class extends React.Component {
-  render () {
-    return <div className="Index">
-      
-      <img src="/static/platzi-logo.png" alt="Logo de platzi"/>
+import 'isomorphic-fetch'
 
-      <div className="Container">
-        <h1>Curso de Next.js</h1>
-        <p>Styled JSX</p>
+export default class extends React.Component {
+  static async getInitialProps () {
+    let req = await fetch('https://api.audioboom.com/channels/recommended')
+    let { body: channels } = await req.json()
+    return { channels }
+  }
+
+  render () {
+    const { channels } = this.props
+
+    console.log(channels)
+
+    return <div>
+      <header>Podcasts</header>
+      
+      <div className="channels">
+        { channels.map((channel) => 
+          <div
+            className="channel"
+            key={channel.id}>
+            <img src={channel.urls.logo_image.original} alt={`Imagen de ${channel.title}`}/>
+            <h2>{channel.title}</h2>
+          </div>
+        )}
       </div>
       
-      {/* Limitado a solo el componente */}
       <style jsx>{`
-        {/* h1 {
-          color: red;
-        } */}
-        
-        // poder acceder a los estilos de un componente y modificarlo
-        {/* div :global(p) {
-          color: green;
-        } */}
-
-        .Index {
-          padding: 30px 0;
+        header {
+          color: #fff;
+          background: #8756ca;
+          padding: 15px;
         }
-
-        .Container {
-          width: 100%;
-          margin: 0 auto;
-          text-align: center;
+        .channels {
+          display: grid;
+          grid-gap: 15px;
+          padding: 15px;
+          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
         }
-
-        img {
-          max-width: 200px;
+        a.channel {
           display: block;
-          margin: 0 auto;
+          margin-bottom: 0.5em;
+          color: #333;
+          text-decoration: none;
         }
-
-        h1 {
-          font-size: 48px;
-          font-weight: 300;
+        .channel img {
+          border-radius: 3px;
+          box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
+          width: 100%;
         }
-
-        p {
-          font-size: 18px;
+        h2 {
+          padding: 5px;
+          font-size: 0.9em;
+          font-weight: 600;
+          margin: 0;
+          text-align: center;
         }
       `}</style>
 
       {/* Sin limitaciones */}
       <style jsx global>{`
         body {
-          background: #1a2a35;
-          color: white;
-          font-family: Helvetica;
+          background: white;
+          margin: 0;
+          font-family: system-ui;
+          text-align: center;
         }
       `}</style>
     </div>
