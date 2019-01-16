@@ -1,7 +1,10 @@
-import 'isomorphic-fetch'
+import Layout from './../components/Layout'
+import ChannelGrid from '../components/ChannelGrid'
+import PodcastList from '../components/PodcastList'
 
 export default class extends React.Component {
-  static async getInitialProps ({ query: { id }}) {
+
+  static async getInitialProps({ query: { id }}) {
     const [reqChannel, reqAudio, reqSeries] = await Promise.all([
       fetch(`https://api.audioboom.com/channels/${id}`),
       fetch(`https://api.audioboom.com/channels/${id}/audio_clips`),
@@ -9,99 +12,65 @@ export default class extends React.Component {
     ])
 
     const [
-      { body: { channel }},
-      { body: { audio_clips: audioClips }},
-      { body: { channels: series }}
+      { body: { channel } },
+      { body: { audio_clips: audioClips } },
+      { body: { channels } }
     ] = await Promise.all([
       reqChannel.json(),
       reqAudio.json(),
       reqSeries.json()
     ])
-    
+
     return {
       channel,
       audioClips,
-      series
+      channels
     }
   }
-  
-  render () {
-    const {
-      channel,
-      audioClips,
-      series
-    } = this.props
 
-    return <div>
-      <header>Podcasts</header>
-      
+  render() {
+    const { channel, audioClips, channels } = this.props
+
+    return <Layout title={`Podcasts - Channel: ${channel.title}`}>
+
+      <div className="banner" style={{ backgroundImage: `url(${channel.urls.banner_image.original})` }} />
+
       <h1>{channel.title}</h1>
-      {
-        audioClips.map((clip) => {
-          return <div key={clip.id}>{clip.title}</div>
-        })
-      }
 
-      <h2>Ultimos podcasts</h2>
-      {
-        series.map((serie) => {
-          return <div key={serie.id}>{serie.title}</div>
-        })
-      }
+      <h2>Series</h2>
+      <ChannelGrid channels={channels}/>
 
+      <h2>Ultimos Podcasts</h2>
+      <PodcastList audioClips={audioClips} />
 
-      {/* <div className="channels">
-        {channels.map((channel) =>
-          <Link href={`/channel?id=${channel.id}`} prefetch key={channel.id}>
-            <a className="channel">
-              <img src={channel.urls.logo_image.original} alt={`Imagen de ${channel.title}`} />
-              <h2>{channel.title}</h2>
-            </a>
-          </Link>
-        )}
-      </div> */}
 
       <style jsx>{`
-        header {
-          color: #fff;
-          background: #8756ca;
-          padding: 15px;
-        }
-        .channels {
-          display: grid;
-          grid-gap: 15px;
-          padding: 15px;
-          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        }
-        a.channel {
-          display: block;
-          margin-bottom: 0.5em;
-          color: #333;
-          text-decoration: none;
-        }
-        .channel img {
-          border-radius: 3px;
-          box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
+        .banner {
           width: 100%;
+          padding-bottom: 30%;
+          background-position: 50% 50%;
+          background-size: cover;
+          background-color: #aaa;
         }
+
+        h1 {
+          font-weight: 600;
+          padding: 0 15px;
+          margin: 15px 0;
+        }
+
         h2 {
           padding: 5px;
           font-size: 0.9em;
           font-weight: 600;
           margin: 0;
-          text-align: center;
         }
-      `}</style>
 
-      {/* Sin limitaciones */}
-      <style jsx global>{`
-        body {
-          background: white;
-          margin: 0;
-          font-family: system-ui;
+        h1, h2 {
           text-align: center;
         }
+
       `}</style>
-    </div>
+    </Layout>
   }
 }
