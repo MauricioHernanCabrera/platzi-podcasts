@@ -11,17 +11,13 @@ export default class extends React.Component {
   render () {
     const { channels } = this.props
 
-    console.log(channels)
-
     return <div>
       <header>Podcasts</header>
       
       <div className="channels">
         { channels.map((channel) => 
-          <Link href="/channel" prefetch>
-            <a
-              className="channel"
-              key={channel.id}>
+          <Link href={`/channel?id=${ channel.id }`} prefetch key={channel.id}>
+            <a className="channel">
               <img src={channel.urls.logo_image.original} alt={`Imagen de ${channel.title}`}/>
               <h2>{channel.title}</h2>
             </a>
