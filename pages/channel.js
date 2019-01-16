@@ -31,7 +31,6 @@ export default class extends React.Component {
       audioClips,
       series
     } = this.props
-    console.log(this.props)
 
     return <div>
       <header>Podcasts</header>
