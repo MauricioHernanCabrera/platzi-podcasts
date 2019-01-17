@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Layout from './../components/Layout'
-import Link from 'next/link'
+import { Link } from './../routes'
 
 export default class Error extends Component {
   static getInitialProps({ res, err }) {
@@ -18,7 +18,7 @@ export default class Error extends Component {
           <div className="message">
             <h1>Esta página no existe :(</h1>
             <p>
-              <Link href="/">
+              <Link route="index">
                 <a>Volver a home</a>
               </Link>
             </p>

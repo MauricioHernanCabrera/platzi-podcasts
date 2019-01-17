@@ -1,11 +1,22 @@
 import React, { Component } from 'react'
 import Layout from './../components/Layout'
 import ChannelGrid from './../components/ChannelGrid'
-import PodcastList from './../components/PodcastList'
+// import PodcastList from './../components/PodcastList'
+import PodcastListWithClick from './../components/PodcastListWithClick'
 import Error from './_error'
 import 'isomorphic-fetch'
 
 export default class extends Component {
+  // constructor (props) {
+  //   super(props)
+  //   this.state = {
+  //     openPodcast: null
+  //   }
+  // }
+  state = {
+    openPodcast: null
+  }
+
   static async getInitialProps({ res, query: { id }}) {
     try {
       const [reqChannel, reqAudio, reqSeries] = await Promise.all([
@@ -18,7 +29,7 @@ export default class extends Component {
         res.statusCode = reqChannel.status
         return {
           channel: null,
-          audioClips: null,
+          podcasts: null,
           channels: null,
           statusCode: reqChannel.status
         }
@@ -27,7 +38,7 @@ export default class extends Component {
         res.statusCode = reqAudio.status
         return {
           channel: null,
-          audioClips: null,
+          podcasts: null,
           channels: null,
           statusCode: reqAudio.status
         }
@@ -36,7 +47,7 @@ export default class extends Component {
         res.statusCode = reqSeries.status
         return {
           channel: null,
-          audioClips: null,
+          podcasts: null,
           channels: null,
           statusCode: reqSeries.status
         }
@@ -44,7 +55,7 @@ export default class extends Component {
   
       const [
         { body: { channel } },
-        { body: { audio_clips: audioClips } },
+        { body: { audio_clips: podcasts } },
         { body: { channels } }
       ] = await Promise.all([
         reqChannel.json(),
@@ -54,7 +65,7 @@ export default class extends Component {
   
       return {
         channel,
-        audioClips,
+        podcasts,
         channels,
         statusCode: 200
       }
@@ -64,15 +75,23 @@ export default class extends Component {
 
       return {
         channel: null,
-        audioClips: null,
+        podcasts: null,
         channels: null,
         statusCode: 503
       }
     }
   }
 
+  openPodcast = (event, podcast) => {
+    event.preventDefault()
+    this.setState({
+      openPodcast: podcast
+    })
+  }
+
   render () {
-    const { channel, audioClips, channels, statusCode } = this.props
+    const { channel, podcasts, channels, statusCode } = this.props
+    const { openPodcast } = this.state
 
     if (statusCode !== 200) {
       return (
@@ -85,13 +104,15 @@ export default class extends Component {
 
         <div className="banner" style={{ backgroundImage: `url(${channel.urls.banner_image.original})` }} />
 
+        { openPodcast && <div>Hay un podcast abierto</div> }
+
         <h1>{channel.title}</h1>
 
         <h2>Series</h2>
         <ChannelGrid channels={channels}/>
 
         <h2>Ultimos Podcasts</h2>
-        <PodcastList audioClips={audioClips} />
+        <PodcastListWithClick podcasts={podcasts} onClickPodcast={openPodcast}/>
 
 
         <style jsx>{`

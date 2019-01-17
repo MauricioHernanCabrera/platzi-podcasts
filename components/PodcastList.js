@@ -1,45 +1,58 @@
 import React, { Component } from 'react'
-import Link from 'next/link'
+import { Link } from './../routes'
+import slug from './../helpers/slug'
 
 export default class PodcastList extends Component {
   render () {
-    const { audioClips } = this.props
-
+    const { podcasts } = this.props
+    
     return (
-      <div className="audioClips">
+      <div className="Podcast">
         {
-          audioClips.map(clip => (
+          podcasts.map(podcast => (
             <Link
-              key={clip.id}
-              href={`/podcast?id=${clip.id}`}
+              route="podcast"
+              key={podcast.id}
+              params={{
+                slugChannel: slug(podcast.channel.title),
+                idChannel: podcast.channel.id,
+                slug: slug(podcast.title),
+                id: podcast.id
+              }}
             >
-              <a className="audioClip">
+              <a className="Podcast">
                 <img
-                  src={clip.urls.post_image.original}
-                  alt={clip.title}
+                  src={podcast.urls.post_image.original}
+                  alt={podcast.title}
                 />
-                <h2>{clip.title}</h2>
+                <h2>{podcast.title}</h2>
+                {/* <p>
+                  {slug(podcast.channel.title)})
+                  {podcast.channel.id})
+                  {slug(podcast.title)})
+                  {podcast.id})
+                </p> */}
               </a>
             </Link>
           ))
         }
 
         <style jsx>{`
-          .audioClips {
+          .Podcast {
             display: grid;
             grid-gap: 15px;
             padding: 15px;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
           }
 
-          a.audioClip {
+          a.Podcast {
             display: block;
             margin-bottom: 0.5em;
             color: #333;
             text-decoration: none;
           }
 
-          .audioClip img {
+          .Podcast img {
             border-radius: 3px;
             box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
             width: 100%;

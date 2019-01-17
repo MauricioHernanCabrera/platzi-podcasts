@@ -1,42 +1,46 @@
 import React, { Component } from 'react'
 import 'isomorphic-fetch'
-import Link from 'next/link'
+import { Link } from './../routes'
 import Layout from './../components/Layout'
+import slug from './../helpers/slug'
 
 export default class extends Component {
   static async getInitialProps({ query: { id }}) {
     const reqPodcast = await fetch(`https://api.audioboom.com/audio_clips/${id}.mp3`)
 
-    const { body: { audio_clip: audioClip } } = await reqPodcast.json()
+    const { body: { audio_clip: podcasts } } = await reqPodcast.json()
 
     return {
-      audioClip
+      podcasts
     }
   }
 
   render () {
-    const { audioClip } = this.props
-
+    const { podcasts } = this.props
+    
     return (
-      <Layout title={audioClip.title}>
+      <Layout title={podcasts.title}>
 
         <div className='modal'>
           <div className='clip'>
             <nav>
-              <Link href={`/channel?id=${audioClip.channel.id}`}>
+              <Link route="channel" params={{
+                slug: slug(podcasts.channel.title),
+                id: podcasts.channel.id
+              }}>
                 <a className='close'>&lt; Volver</a>
               </Link>
             </nav>
 
             <picture>
-              <div style={{ backgroundImage: `url(${audioClip.urls.image || audioClip.channel.urls.logo_image.original})` }} />
+              <div style={{ backgroundImage: `url(${podcasts.urls.image || podcasts.channel.urls.logo_image.original})` }} />
             </picture>
 
             <div className='player'>
-              <h3>{audioClip.title}</h3>
-              <h6>{audioClip.channel.title}</h6>
+              <h3>{podcasts.title}</h3>
+              <h6>{podcasts.channel.title}</h6>
               <audio controls autoPlay={false}>
-                <source src={audioClip.urls.high_mp3} type='audio/mpeg' />
+                <source src={podcasts.urls.high_mp3} type='audio/mpeg' />
               </audio>
             </div>
           </div>

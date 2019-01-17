@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Link from 'next/link'
+import { Link } from './../routes'
 import Head from 'next/head'
 
 export default class Layout extends Component {
@@ -15,7 +15,7 @@ export default class Layout extends Component {
         </Head>
         
         <header>
-          <Link href="/">
+          <Link route="index">
             <a>Podcasts</a>
           </Link>
         </header>
