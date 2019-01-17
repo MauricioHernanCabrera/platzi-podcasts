@@ -99,7 +99,7 @@ export default class extends Component {
 
   render () {
     const { channel, podcasts, channels, statusCode } = this.props
-    const { openPodcast, closePodcast } = this.state
+    const { openPodcast } = this.state
 
     if (statusCode !== 200) {
       return (
@@ -113,7 +113,7 @@ export default class extends Component {
         <div className="banner" style={{ backgroundImage: `url(${channel.urls.banner_image.original})` }} />
 
         { openPodcast && 
-          <PodcastPlayer clip={openPodcast} onClose={closePodcast}/>
+          <PodcastPlayer clip={openPodcast} onClose={this.closePodcast}/>
         }
 
         <h1>{channel.title}</h1>
@@ -122,7 +122,7 @@ export default class extends Component {
         <ChannelGrid channels={channels}/>
 
         <h2>Ultimos Podcasts</h2>
-        <PodcastListWithClick podcasts={podcasts} onClickPodcast={openPodcast}/>
+        <PodcastListWithClick podcasts={podcasts} onClickPodcast={this.openPodcast}/>
 
 
         <style jsx>{`

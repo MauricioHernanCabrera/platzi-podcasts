@@ -20,7 +20,7 @@ export default class Layout extends Component {
         <meta name="viewport" content="width=device-width" />
       </Head>
 
-      <header><Link route="home"><a>Podcasts</a></Link></header>
+      <header><Link route="index"><a>Podcasts</a></Link></header>
 
       {children}
 
