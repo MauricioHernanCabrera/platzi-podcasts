@@ -1,7 +1,7 @@
-import Link from 'next/link'
+import React, { Component } from 'react'
 import slug from '../helpers/slug'
 
-export default class extends React.Component {
+export default class extends Component {
   render() {
     const { podcasts, onClickPodcast } = this.props
 

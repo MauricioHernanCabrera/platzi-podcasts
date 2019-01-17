@@ -1,10 +1,11 @@
+import 'isomorphic-fetch'
 import React, { Component } from 'react'
 import Layout from './../components/Layout'
 import ChannelGrid from './../components/ChannelGrid'
 // import PodcastList from './../components/PodcastList'
 import PodcastListWithClick from './../components/PodcastListWithClick'
 import Error from './_error'
-import 'isomorphic-fetch'
+import PodcastPlayer from './../components/PodcastPlayer'
 
 export default class extends Component {
   // constructor (props) {
@@ -89,9 +90,16 @@ export default class extends Component {
     })
   }
 
+  closePodcast = (event) => {
+    event.preventDefault()
+    this.setState({
+      openPodcast: null
+    })
+  }
+
   render () {
     const { channel, podcasts, channels, statusCode } = this.props
-    const { openPodcast } = this.state
+    const { openPodcast, closePodcast } = this.state
 
     if (statusCode !== 200) {
       return (
@@ -104,7 +112,9 @@ export default class extends Component {
 
         <div className="banner" style={{ backgroundImage: `url(${channel.urls.banner_image.original})` }} />
 
-        { openPodcast && <div>Hay un podcast abierto</div> }
+        { openPodcast && 
+          <PodcastPlayer clip={openPodcast} onClose={closePodcast}/>
+        }
 
         <h1>{channel.title}</h1>
 
