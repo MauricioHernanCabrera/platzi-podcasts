@@ -1,9 +1,9 @@
+import React, { Component } from 'react'
 import 'isomorphic-fetch'
 import Link from 'next/link'
+import Layout from './../components/Layout'
 
-import Layout from '../components/Layout'
-
-export default class extends React.Component {
+export default class extends Component {
   static async getInitialProps({ query: { id }}) {
     const reqPodcast = await fetch(`https://api.audioboom.com/audio_clips/${id}.mp3`)
 
@@ -14,7 +14,7 @@ export default class extends React.Component {
     }
   }
 
-  render() {
+  render () {
     const { audioClip } = this.props
 
     return (

@@ -1,8 +1,8 @@
+import React, { Component } from 'react'
 import Link from 'next/link'
 
-export default class PodcastList extends React.Component {
-  render() {
-
+export default class PodcastList extends Component {
+  render () {
     const { audioClips } = this.props
 
     return (
