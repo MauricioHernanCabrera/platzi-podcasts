@@ -1,35 +1,81 @@
 import Layout from './../components/Layout'
 import ChannelGrid from '../components/ChannelGrid'
 import PodcastList from '../components/PodcastList'
+import Error from 'next/error'
 
 export default class extends React.Component {
 
-  static async getInitialProps({ query: { id }}) {
-    const [reqChannel, reqAudio, reqSeries] = await Promise.all([
-      fetch(`https://api.audioboom.com/channels/${id}`),
-      fetch(`https://api.audioboom.com/channels/${id}/audio_clips`),
-      fetch(`https://api.audioboom.com/channels/${id}/child_channels`)
-    ])
+  static async getInitialProps({ res, query: { id }}) {
+    try {
+      const [reqChannel, reqAudio, reqSeries] = await Promise.all([
+        fetch(`https://api.audioboom.com/channels/${id}`),
+        fetch(`https://api.audioboom.com/channels/${id}/audio_clips`),
+        fetch(`https://api.audioboom.com/channels/${id}/child_channels`)
+      ])
 
-    const [
-      { body: { channel } },
-      { body: { audio_clips: audioClips } },
-      { body: { channels } }
-    ] = await Promise.all([
-      reqChannel.json(),
-      reqAudio.json(),
-      reqSeries.json()
-    ])
+      if (reqChannel.status >= 400) {
+        res.statusCode = reqChannel.status
+        return {
+          channel: null,
+          audioClips: null,
+          channels: null,
+          statusCode: reqChannel.status
+        }
+      }
+      if (reqAudio.status >= 400) {
+        res.statusCode = reqAudio.status
+        return {
+          channel: null,
+          audioClips: null,
+          channels: null,
+          statusCode: reqAudio.status
+        }
+      }
+      if (reqSeries.status >= 400) {
+        res.statusCode = reqSeries.status
+        return {
+          channel: null,
+          audioClips: null,
+          channels: null,
+          statusCode: reqSeries.status
+        }
+      }
+  
+      const [
+        { body: { channel } },
+        { body: { audio_clips: audioClips } },
+        { body: { channels } }
+      ] = await Promise.all([
+        reqChannel.json(),
+        reqAudio.json(),
+        reqSeries.json()
+      ])
+  
+      return {
+        channel,
+        audioClips,
+        channels,
+        statusCode: 200
+      }
+    } catch (error) {
+      console.log(error)
+      res.statusCode = 503
 
-    return {
-      channel,
-      audioClips,
-      channels
+      return {
+        channel: null,
+        audioClips: null,
+        channels: null,
+        statusCode: 503
+      }
     }
   }
 
   render() {
-    const { channel, audioClips, channels } = this.props
+    const { channel, audioClips, channels, statusCode } = this.props
+
+    if (statusCode !== 200) {
+      return <Error statusCode={statusCode} />
+    }
 
     return <Layout title={`Podcasts - Channel: ${channel.title}`}>
 
